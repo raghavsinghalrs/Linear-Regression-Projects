@@ -1,0 +1,33 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as pt
+data=pd.read_csv(r"C:\Pycharm\PyCharm Community Edition 2021.1.1\ML\50_Startups.csv")
+x=data.iloc[:,:-1]
+y=data.iloc[:,4]
+#convert it into categorical columns
+
+states=pd.get_dummies(x['State'],drop_first=True)
+
+x=x.drop('State',axis=1)
+x=pd.concat([x,states],axis=1)
+#Splits the data in to training and testing
+from sklearn.model_selection import train_test_split
+x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.3,random_state=0)
+from sklearn.linear_model import LinearRegression
+LR=LinearRegression()
+LR.fit(x_train,y_train)
+#Now the model get trained
+pred_LR=LR.predict(x_test)
+diff_LR=pred_LR-y_test
+from sklearn.metrics import r2_score
+score=r2_score(pred_LR,y_test)
+print("Linear Regression performance for Startups dataset is : ")
+print(" R2 is :",score)
+from sklearn import metrics
+rmse=np.sqrt(metrics.mean_squared_error(pred_LR,y_test))
+print("Root mean squared error is: ",rmse)
+#Visualisation
+pt.scatter(data['Administration'],data['Profit'])
+pt.xlabel('Administration')
+pt.ylabel('Profit')
+pt.show()
